@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>블랙록 추천 종목 리스트 생성기</title>
+  <title>블랙록 리스트 생성기 (최적화 버전)</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
     
@@ -28,7 +28,6 @@
       border: 1px solid rgba(234, 88, 12, 0.3);
     }
 
-    /* 상단 헤더 스타일 */
     .header {
       background: linear-gradient(90deg, #111827, #1f2937);
       padding: 30px 45px;
@@ -45,36 +44,24 @@
       color: white;
     }
 
-    .title-area {
-      text-align: right;
-    }
-
     .main-title {
       font-size: 28px;
       font-weight: 900;
       color: #f8fafc;
       margin: 0;
-      line-height: 1.2;
     }
 
-    /* 테이블 스타일 */
-    .content {
-      padding: 30px;
-    }
+    .content { padding: 30px; }
 
     table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      border-radius: 12px;
-      overflow: hidden;
     }
 
     th {
       background: #1e2937;
       color: #f59e0b;
-      font-size: 18px;
-      font-weight: 700;
       padding: 15px;
       border-bottom: 2px solid #f59e0b;
     }
@@ -83,27 +70,35 @@
       background: #111827;
       color: #e2e8f0;
       padding: 15px;
-      font-size: 16px;
       text-align: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       outline: none;
-      transition: background 0.2s;
+      position: relative;
     }
 
-    /* 행(Row)별 교차 색상 */
-    tr:nth-child(even) td {
-      background: #161e2d;
+    tr:nth-child(even) td { background: #161e2d; }
+
+    /* 핵심: Placeholder 스타일 (흐리게 표시) */
+    [contenteditable]:empty::before {
+      content: attr(data-placeholder);
+      color: rgba(255, 255, 255, 0.15); /* 매우 흐리게 */
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      width: 100%;
+      display: block;
     }
 
-    td:focus {
-      background: rgba(245, 158, 11, 0.1) !important;
-      color: #fcd34d;
+    /* 입력 중이거나 내용이 있으면 숨김 */
+    [contenteditable]:focus::before {
+      display: none;
     }
 
-    /* 수익률 열 강조 */
-    td:last-child {
-      font-weight: 700;
-      color: #fbbf24;
+    /* 이미지 캡처 시 가이드 문구 강제 제거용 클래스 */
+    .hide-placeholder [contenteditable]:empty::before {
+      display: none !important;
     }
 
     .download-btn {
@@ -117,12 +112,6 @@
       border-radius: 50px;
       cursor: pointer;
       box-shadow: 0 12px 40px rgba(245, 158, 11, 0.5);
-      transition: all 0.2s;
-    }
-
-    .download-btn:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 15px 45px rgba(245, 158, 11, 0.6);
     }
   </style>
 </head>
@@ -131,9 +120,7 @@
   <div class="infographic" id="capture-area">
     <div class="header">
       <div class="logo">BlackRock®</div>
-      <div class="title-area">
-        <h1 class="main-title">블랙록 추천 종목 리스트</h1>
-      </div>
+      <div class="main-title">블랙록 추천 종목 리스트</div>
     </div>
 
     <div class="content">
@@ -148,54 +135,54 @@
           </tr>
         </thead>
         <tbody id="tableBody">
-          <script>
-            const body = document.getElementById('tableBody');
-            for(let i=0; i<10; i++) {
-              const tr = document.createElement('tr');
-              tr.innerHTML = `
-                <td contenteditable="true">00.00</td>
-                <td contenteditable="true">종목명 입력</td>
-                <td contenteditable="true">0,000</td>
-                <td contenteditable="true">0,000</td>
-                <td contenteditable="true">+0.0%</td>
-              `;
-              body.appendChild(tr);
-            }
-          </script>
-        </tbody>
+          </tbody>
       </table>
     </div>
   </div>
 
-  <button class="download-btn" id="saveBtn">
-    📥 리스트 이미지로 저장하기
-  </button>
+  <button class="download-btn" id="saveBtn">📥 리스트 이미지로 저장하기</button>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
-    // 1. 엔터 입력 방지 및 포커스 관리
+    // 행 자동 생성 및 placeholder 설정
+    const tableBody = document.getElementById('tableBody');
+    const placeholders = ["00.00", "종목명 입력", "0,000", "0,000", "+0.0%"];
+    
+    for(let i=0; i<10; i++) {
+      const tr = document.createElement('tr');
+      placeholders.forEach(ph => {
+        const td = document.createElement('td');
+        td.contentEditable = "true";
+        td.setAttribute('data-placeholder', ph);
+        tr.appendChild(td);
+      });
+      tableBody.appendChild(tr);
+    }
+
+    // 엔터 입력 방지
     document.addEventListener('keydown', (e) => {
-      if (e.target.getAttribute('contenteditable') === 'true' && e.key === 'Enter') {
+      if (e.target.contentEditable === 'true' && e.key === 'Enter') {
         e.preventDefault();
         e.target.blur();
       }
     });
 
-    // 2. 이미지 다운로드 로직
+    // 다운로드 로직
     async function downloadImage() {
       const btn = document.getElementById('saveBtn');
       const area = document.getElementById('capture-area');
       
-      btn.innerText = "⏳ 고화질 변환 중...";
-      btn.style.opacity = "0.7";
+      btn.innerText = "⏳ 처리 중...";
+      
+      // 1. 캡처 직전 placeholder 숨기기 모드 활성화
+      area.classList.add('hide-placeholder');
 
       try {
         await document.fonts.ready;
         
         setTimeout(() => {
           html2canvas(area, {
-            scale: 3, 
-            useCORS: true,
+            scale: 3,
             backgroundColor: '#0a0f1f',
           }).then(canvas => {
             const link = document.createElement('a');
@@ -203,12 +190,13 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
             
+            // 2. 캡처 완료 후 다시 원래대로 복구
+            area.classList.remove('hide-placeholder');
             btn.innerText = "📥 리스트 이미지로 저장하기";
-            btn.style.opacity = "1";
           });
-        }, 150);
+        }, 100);
       } catch (err) {
-        alert("저장 중 오류가 발생했습니다.");
+        area.classList.remove('hide-placeholder');
         btn.innerText = "📥 리스트 이미지로 저장하기";
       }
     }
