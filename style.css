@@ -1,0 +1,153 @@
+:root {
+  /* 기본 테마: 핑크 (Pink) */
+  --bg-color: #fcf1f3;
+  --glow-1: rgba(255, 182, 193, 0.6);
+  --glow-2: rgba(255, 228, 225, 0.8);
+  --text-main: #2d2626;
+  --text-accent: #d85c6c;
+  --box-bg: rgba(255, 255, 255, 0.7);
+  --box-border: rgba(255, 255, 255, 0.9);
+
+  --font-base: 'Pretendard', sans-serif;
+  --font-title: 'GmarketSans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #f0f2f5; font-family: var(--font-base); color: #333; }
+
+.app { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+
+/* ---------- Control Panel ---------- */
+.panel { width: 100%; max-width: 400px; background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+.panel-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.panel-header p { font-size: 13px; color: #777; margin-bottom: 24px; }
+
+.panel-section { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+.panel-section:last-of-type { border-bottom: none; }
+.section-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 12px; }
+
+.field-group { margin-bottom: 16px; }
+label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 6px; }
+
+.text-input { width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; transition: 0.2s; background: #fff; }
+.text-input:focus { border-color: #d85c6c; outline: none; }
+.field-row { margin-bottom: 12px; }
+
+select.text-input { appearance: none; -webkit-appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23888'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 36px;
+}
+
+
+/* Theme Selector */
+.theme-row { display: flex; gap: 12px; }
+.theme-swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 0 1px #ddd; transition: 0.2s; }
+.theme-swatch.active { box-shadow: 0 0 0 2.5px #333; transform: scale(1.1); }
+
+.download-btn { width: 100%; padding: 16px; background: #222; color: #fff; font-size: 16px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; transition: 0.2s; }
+.download-btn:hover { background: #000; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+/* ---------- Preview Poster ---------- */
+.preview-wrap { display: flex; flex-direction: column; align-items: center; position: relative; }
+
+.poster-container {
+  width: 500px;
+  height: 750px; /* 2:3 비율의 세로형 포스터 */
+  background-color: var(--bg-color);
+  position: relative;
+  border-radius: 0; /* 배포용이므로 각진 포스터 형태 유지 */
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 30px;
+  isolation: isolate; /* html2canvas 배경 렌더링 보호 */
+}
+
+/* 감각적인 오로라 배경 효과 */
+.bg-glow { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; }
+.bg-glow.blur-1 { width: 400px; height: 400px; background: var(--glow-1); top: -100px; left: -100px; }
+.bg-glow.blur-2 { width: 450px; height: 450px; background: var(--glow-2); bottom: -100px; right: -150px; }
+
+/* 로고 영역 (BANADA 고정 로고) */
+.poster-logo-wrap { height: 56px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; }
+.poster-logo-wrap img { max-height: 100%; max-width: 260px; object-fit: contain; }
+
+/* 메인 타이틀 */
+.poster-title { text-align: center; margin-bottom: 30px; }
+.poster-title h1 { font-family: var(--font-title); font-size: 46px; font-weight: 700; color: var(--text-main); line-height: 1.1; letter-spacing: -1px; text-shadow: 2px 2px 0px #fff; }
+
+/* 중앙 이미지 */
+.poster-image-wrap { flex: 1; width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 30px; }
+.image-frame { width: 260px; height: 260px; border-radius: 50%; background: #fff; padding: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; overflow: hidden; }
+.image-frame img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; padding: 10px; }
+
+/* 계좌 정보 박스 (Glassmorphism) */
+.poster-info-box {
+  width: 100%;
+  background: var(--box-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--box-border);
+  border-radius: 16px;
+  padding: 24px 30px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.info-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(0,0,0,0.1); }
+.info-row:last-child { border-bottom: none; padding-bottom: 0; }
+.info-label { font-size: 16px; font-weight: 700; color: var(--text-accent); letter-spacing: 2px; }
+.info-value { font-size: 20px; font-weight: 700; color: var(--text-main); }
+.info-value.account-num { font-size: 24px; font-family: var(--font-title); font-weight: 500; letter-spacing: 1px; }
+
+/* 계좌번호 + 복사 버튼 */
+.account-copy-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.copy-btn {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-accent);
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.copy-btn:hover { background: #fff; transform: translateY(-1px); }
+.copy-btn:active { transform: translateY(0); }
+.copy-btn-all { color: #fff; background: var(--text-accent); border-color: var(--text-accent); }
+.copy-btn-all:hover { filter: brightness(1.08); background: var(--text-accent); }
+[data-active-theme="black"] .copy-btn { color: #fff; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
+[data-active-theme="black"] .copy-btn:hover { background: rgba(255,255,255,0.18); }
+[data-active-theme="black"] .copy-btn-all { color: #1a1a1a; background: var(--text-accent); border-color: var(--text-accent); }
+
+/* 복사 완료 토스트 */
+.copy-toast {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 30px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, bottom 0.25s;
+  white-space: nowrap;
+}
+.copy-toast.show { opacity: 1; bottom: -20px; }
+
+/* 하단 푸터 (안내 문구) */
+.poster-footer { text-align: center; font-size: 14px; font-weight: 600; color: var(--text-main); opacity: 0.8; letter-spacing: -0.5px; word-break: keep-all; line-height: 1.4; padding: 0 10px; }
+
+/* 테마별 디테일 조정 (Black 테마) */
+[data-active-theme="black"] .poster-title h1 { text-shadow: none; color: #fff; }
+[data-active-theme="black"] .info-value { color: #fff; }
+[data-active-theme="black"] .poster-footer { color: #ccc; }
+[data-active-theme="black"] .info-row { border-bottom-color: rgba(255,255,255,0.15); }

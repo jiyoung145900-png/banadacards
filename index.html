@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>프리미엄 입금계좌 안내 렌더러</title>
+
+  <!-- 웹 폰트 (Pretendard & Gmarket Sans) -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link href="https://webfontworld.github.io/gmarket/GmarketSans.css" rel="stylesheet">
+
+  <!-- html2canvas 라이브러리 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <!-- ===================== CONTROL PANEL ===================== -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>입금계좌 안내 생성기</h2>
+      <p>정보를 입력하고 고화질 이미지로 저장하세요.</p>
+    </div>
+
+    <!-- 1. 은행 선택 -->
+    <div class="panel-section">
+      <h3 class="section-title">1. 은행 선택</h3>
+
+      <div class="field-row">
+        <label for="bankSelect">은행명</label>
+        <select class="text-input" id="bankSelect">
+          <optgroup label="시중은행">
+            <option value="KB국민은행" data-color="#FFB515" data-label="KB" data-logo="assets/bank-logos/kb.png">KB국민은행</option>
+            <option value="신한은행" data-color="#0046FF" data-label="신한" data-logo="assets/bank-logos/shinhan.png">신한은행</option>
+            <option value="우리은행" data-color="#0067AC" data-label="우리" data-logo="assets/bank-logos/woori.png">우리은행</option>
+            <option value="하나은행" data-color="#009490" data-label="하나" data-logo="assets/bank-logos/hana.png">하나은행</option>
+            <option value="SC제일은행" data-color="#00263A" data-label="SC" data-logo="assets/bank-logos/sc.png">SC제일은행</option>
+          </optgroup>
+          <optgroup label="특수은행">
+            <option value="NH농협은행" data-color="#00A651" data-label="NH" data-logo="assets/bank-logos/nh.png">NH농협은행</option>
+            <option value="IBK기업은행" data-color="#0068B7" data-label="IBK" data-logo="assets/bank-logos/ibk.png">IBK기업은행</option>
+            <option value="수협은행" data-color="#0072BC" data-label="수협" data-logo="assets/bank-logos/suhyup.png">수협은행</option>
+            <option value="우체국" data-color="#E60013" data-label="우체국" data-logo="assets/bank-logos/epost.png">우체국</option>
+          </optgroup>
+          <optgroup label="인터넷은행">
+            <option value="카카오뱅크" data-color="#FFEB00" data-label="카카오" data-logo="assets/bank-logos/kakao.png">카카오뱅크</option>
+            <option value="케이뱅크" data-color="#FF4800" data-label="케이" data-logo="assets/bank-logos/kbank.png">케이뱅크</option>
+            <option value="토스뱅크" data-color="#0064FF" data-label="토스" data-logo="assets/bank-logos/toss.png">토스뱅크</option>
+          </optgroup>
+          <optgroup label="지방은행">
+            <option value="BNK부산은행" data-color="#0F4C9E" data-label="부산" data-logo="assets/bank-logos/bnk-busan.png">BNK부산은행</option>
+            <option value="BNK경남은행" data-color="#004C97" data-label="경남" data-logo="assets/bank-logos/bnk-gyeongnam.png">BNK경남은행</option>
+            <option value="iM뱅크(대구)" data-color="#EE3124" data-label="iM" data-logo="assets/bank-logos/im-daegu.png">iM뱅크(대구)</option>
+            <option value="광주은행" data-color="#E4032E" data-label="광주" data-logo="assets/bank-logos/gwangju.png" selected>광주은행</option>
+            <option value="전북은행" data-color="#004EA2" data-label="전북" data-logo="assets/bank-logos/jeonbuk.png">전북은행</option>
+            <option value="제주은행" data-color="#0072BC" data-label="제주" data-logo="assets/bank-logos/jeju.png">제주은행</option>
+          </optgroup>
+          <optgroup label="상호금융">
+            <option value="새마을금고" data-color="#009944" data-label="MG" data-logo="assets/bank-logos/mg.png">새마을금고</option>
+            <option value="신협" data-color="#00A651" data-label="신협" data-logo="assets/bank-logos/shinhyup.png">신협</option>
+          </optgroup>
+          <optgroup label="기타">
+            <option value="__custom__" data-color="#888888" data-label="">직접 입력...</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="field-row" id="customBankRow" style="display:none;">
+        <label for="customBankName">은행명 직접 입력</label>
+        <input class="text-input" id="customBankName" type="text" placeholder="예: OO은행">
+      </div>
+    </div>
+
+    <!-- 2. 계좌 정보 입력 -->
+    <div class="panel-section">
+      <h3 class="section-title">2. 계좌 정보 입력</h3>
+
+      <div class="field-row">
+        <label for="accountNumber">계좌번호</label>
+        <input class="text-input" id="accountNumber" type="text" value="1121-021-112829" placeholder="- 포함 입력">
+      </div>
+
+      <div class="field-row">
+        <label for="accountHolder">예금주</label>
+        <input class="text-input" id="accountHolder" type="text" value="김태완" placeholder="예금주 성함">
+      </div>
+    </div>
+
+    <!-- 3. 하단 안내 문구 -->
+    <div class="panel-section">
+      <h3 class="section-title">3. 하단 안내 문구</h3>
+      <div class="field-row">
+        <input class="text-input" id="footerText" type="text" value="※ 입금 후에는 이체내역(스크린샷)을 꼭 캡처해서 보여주세요.">
+      </div>
+    </div>
+
+    <!-- 4. 테마 색상 -->
+    <div class="panel-section">
+      <h3 class="section-title">4. 배경 테마</h3>
+      <div class="theme-row">
+        <div class="theme-swatch active" data-theme="pink" style="background: linear-gradient(135deg, #ffe5e8, #f7c3c8);"></div>
+        <div class="theme-swatch" data-theme="blue" style="background: linear-gradient(135deg, #e3f0ff, #b6d3f2);"></div>
+        <div class="theme-swatch" data-theme="black" style="background: linear-gradient(135deg, #2b2b2b, #141414);"></div>
+      </div>
+    </div>
+
+    <button class="download-btn" id="downloadBtn" type="button">이미지로 저장하기</button>
+  </div>
+
+  <!-- ===================== PREVIEW STAGE ===================== -->
+  <div class="preview-wrap">
+    <div class="poster-container" id="poster">
+      <!-- 배경 장식 (빛 퍼짐 효과) -->
+      <div class="bg-glow blur-1"></div>
+      <div class="bg-glow blur-2"></div>
+
+      <!-- 상단 로고 영역 (BANADA 고정 로고) -->
+      <div class="poster-logo-wrap">
+        <img id="renderLogo" src="assets/logo/banada-logo.png" alt="BANADA">
+      </div>
+
+      <!-- 메인 타이틀 -->
+      <div class="poster-title">
+        <h1>입금계좌 안내</h1>
+      </div>
+
+      <!-- 중앙 메인 이미지 / 은행 배지 -->
+      <div class="poster-image-wrap">
+        <div class="image-frame">
+          <img id="renderMainImage" src="" alt="bank badge">
+        </div>
+      </div>
+
+      <!-- 정보 박스 (글래스모피즘) -->
+      <div class="poster-info-box">
+        <div class="info-row">
+          <div class="info-label">은행명</div>
+          <div class="info-value" id="renderBank">광주은행</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">계좌번호</div>
+          <div class="account-copy-wrap">
+            <div class="info-value account-num" id="renderAccount">1121-021-112829</div>
+            <button class="copy-btn no-capture" id="copyAccountBtn" type="button" title="계좌번호만 복사">계좌만</button>
+            <button class="copy-btn copy-btn-all no-capture" id="copyAllBtn" type="button" title="은행명·계좌번호·예금주 전체 복사">전체복사</button>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">예금주</div>
+          <div class="info-value name" id="renderName">김태완</div>
+        </div>
+      </div>
+
+      <!-- 하단 문구 -->
+      <div class="poster-footer" id="renderFooter">
+        ※ 입금 후에는 이체내역(스크린샷)을 꼭 캡처해서 보여주세요.
+      </div>
+    </div>
+
+    <div class="copy-toast" id="copyToast">계좌번호가 복사되었습니다</div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
